@@ -25,8 +25,13 @@ export default function Home() {
 
   if (isTelegram === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Yuklanmoqda...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 text-center">
+        <p className="text-muted-foreground mb-2">Yuklanmoqda...</p>
+        <p className="text-xs text-muted-foreground">
+          Telegram: {typeof window !== "undefined" && (window as any).Telegram ? "ha" : "yo'q"}
+          {" | "}
+          WebApp: {typeof window !== "undefined" && (window as any).Telegram?.WebApp ? "ha" : "yo'q"}
+        </p>
       </div>
     );
   }

@@ -135,10 +135,10 @@ const defaultValues: FormData = {
     firstName: "",
     lastName: "",
     birthDate: "",
-    gender: "erkak",
-    maritalStatus: "boydoq",
+    gender: undefined as any,
+    maritalStatus: undefined as any,
     hasChildren: false,
-    citizenship: "O'zbekiston",
+    citizenship: "",
     city: "",
     region: "",
     phone: "",
@@ -151,7 +151,7 @@ const defaultValues: FormData = {
     availabilityType: "now",
   },
   education: {
-    entries: [{ degree: "bakalavr", periodFrom: "", periodTo: "", institution: "", fieldOfStudy: "" }],
+    entries: [{ degree: undefined as any, periodFrom: "", periodTo: "", institution: "", fieldOfStudy: "" }],
   },
   workExperience: {
     entries: [],

@@ -5,17 +5,28 @@ import { RegistrationWizard } from "@/components/registration-wizard";
 import { initTelegramWebApp, isTelegramWebApp } from "@/lib/telegram";
 import { Button } from "@/components/ui/button";
 
+function getLeadIdFromUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  return params.get("lead_id");
+}
+
 export default function Home() {
   const [isTelegram, setIsTelegram] = useState<boolean | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [leadId, setLeadId] = useState<string | null>(null);
 
   useEffect(() => {
     try {
       initTelegramWebApp();
       const hasWebApp = isTelegramWebApp();
       setIsTelegram(hasWebApp);
+      const lid = getLeadIdFromUrl();
+      setLeadId(lid);
       if (!hasWebApp) {
         setLoadError("Telegram WebApp topilmadi. Iltimos, Telegram orqali oching.");
+      } else if (!lid) {
+        setLoadError("Lead ID topilmadi. Iltimos, bot orqali qayta kiring.");
       }
     } catch (err: any) {
       setLoadError(err?.message || "Yuklashda xatolik");
@@ -48,5 +59,5 @@ export default function Home() {
     );
   }
 
-  return <RegistrationWizard />;
+  return <RegistrationWizard leadId={leadId} />;
 }

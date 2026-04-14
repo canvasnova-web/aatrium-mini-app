@@ -44,7 +44,7 @@ const personalDataSchema = z.object({
   citizenship: z.string().min(1, "Fuqarolik kiritilishi shart"),
   city: z.string().min(1, "Shahar kiritilishi shart"),
   region: z.string().min(1, "Viloyat kiritilishi shart"),
-  phone: z.string().min(1, "Telefon kiritilishi shart"),
+  phone: z.string().min(1, "Telefon kiritilishi shart").regex(/^\+?[1-9]\d{1,14}$/, "Telefon raqami noto'g'ri formatda. Misol: +998901234567 yoki +491511234567"),
   telegramOrPhone: z.string().optional(),
   email: z.string().email().optional().or(z.literal("")),
 });
@@ -157,10 +157,10 @@ const defaultValues: FormData = {
     entries: [],
   },
   languages: {
-    uzbekLevel: "native",
-    russianLevel: "b1",
-    germanLevel: "a1",
-    englishLevel: "a1",
+    uzbekLevel: undefined as any,
+    russianLevel: undefined as any,
+    germanLevel: undefined as any,
+    englishLevel: undefined as any,
     hasGermanCertificate: false,
   },
   driversLicense: {

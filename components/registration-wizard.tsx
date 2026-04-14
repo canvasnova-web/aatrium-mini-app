@@ -413,7 +413,7 @@ export function RegistrationWizard({ leadId }: { leadId: string | null }) {
 
 function getStepTitle(step: number): string {
   const titles = [
-    "Shaxsiy ma'lumotlar / Persönliche Daten",
+    "Persönliche Daten ✓",  // Geändert für Test
     "Qiziqish va mavjudlik / Interesse & Verfügbarkeit",
     "Ta'lim va malaka / Bildung & Ausbildung",
     "Mehnat tajribasi / Berufserfahrung",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, FormProvider, useFieldArray, Controller } from "react-hook-form";
+import { useForm, FormProvider, useFieldArray, Controller, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,6 +105,9 @@ const otherInfoSchema = z.object({
 const consentSchema = z.object({
   agreed: z.boolean(),
   date: z.string(),
+}).refine((data) => data.agreed === true, {
+  message: "Rozilik bildirish majburiy / Einwilligung erforderlich",
+  path: ["agreed"],
 });
 
 const formSchema = z.object({
@@ -197,7 +200,7 @@ const languageLevelOptions = [
   { value: "native", label: "Ona tili / Muttersprache" },
 ];
 
-export function RegistrationWizard() {
+export function RegistrationWizard({ leadId }: { leadId: string | null }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isTelegram, setIsTelegram] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -284,6 +287,13 @@ export function RegistrationWizard() {
     setSubmitError(null);
 
     try {
+      if (!leadId) {
+        setSubmitError("Lead ID topilmadi. Iltimos, bot orqali qayta kiring.");
+        hapticFeedback("notification", "error");
+        setIsSubmitting(false);
+        return;
+      }
+
       const initData = getInitDataRaw();
       if (!initData) {
         setSubmitError("Telegram ma'lumotlari topilmadi. / Telegram-Daten nicht gefunden.");
@@ -297,7 +307,7 @@ export function RegistrationWizard() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ initData, formData: data }),
+          body: JSON.stringify({ initData, leadId, formData: data }),
         }
       );
 
@@ -1048,6 +1058,7 @@ function Step8OtherInfo({ control }: { control: any }) {
 
 // Step 9: Consent
 function Step9Consent({ control, watch }: { control: any; watch: any }) {
+  const { formState: { errors } } = useFormContext();
   const agreed = watch("consent.agreed");
 
   return (
@@ -1066,10 +1077,10 @@ function Step9Consent({ control, watch }: { control: any; watch: any }) {
           name="consent.agreed"
           control={control}
           render={({ field }) => (
-            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+            <Checkbox id="consent-agreed" checked={field.value} onCheckedChange={field.onChange} />
           )}
         />
-        <Label className="text-sm leading-tight">
+        <Label htmlFor="consent-agreed" className="text-sm leading-tight cursor-pointer">
           Men roziman / Ich stimme zu *
         </Label>
       </div>
@@ -1083,9 +1094,9 @@ function Step9Consent({ control, watch }: { control: any; watch: any }) {
         />
       </div>
 
-      {!agreed && (
+      {errors.consent?.agreed && (
         <p className="text-sm text-destructive">
-          Rozilik bildirish majburiy / Einwilligung erforderlich
+          {errors.consent.agreed.message}
         </p>
       )}
     </div>
